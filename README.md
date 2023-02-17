@@ -24,25 +24,7 @@ By default, it will use `"/var/run/tdx-qgs/qgs.socket"` as the qgs socket.
 
 ### Build the binary
 
-1. Build and launch the modified version of qgs
-
-```bash
-cd tool
-docker built .
-```
-
-launch a container using newly built image, copy the built binary `qgs`
-```bash
-docker cp <container-id>:/usr/local/bin/qgs/qgs ./qgs
-```
-
-create a directory to put qgs socket and launch the qgs
-```bash
-mkdir -p /var/run/tdx-qgs
-./qgs -uds_path=/var/run/tdx-qgs/qgs.socket
-```
-
-2. build and launch the qgsd-multiplexer
+build and launch the qgsd-multiplexer
 
 ```bash
 git clone https://github.com/inclavare-containers/tdx-qgsd-multiplexer.git
@@ -53,10 +35,29 @@ cargo build --bin qgsd-multiplexer --features="tokio/rt-multi-thread main tokio/
 
 Now it will automatically multiplex the qgsd to different tdx guests.
 
-### Build image containing tdx stack of anolis8.6 and the binary
+### Build image containing tdx QPL stack and launch
 
 ```bash
 git clone https://github.com/inclavare-containers/tdx-qgsd-multiplexer.git
 cd tdx-qgsd-multiplexer
 sudo bash tool/build.sh
+```
+
+Get proper pccs configration
+```bash
+token=$(curl -s -X PUT -H "X-aliyun-ecs-metadata-token-ttl-seconds: 5" "http://100.100.100.200/latest/api/token")
+region_id=$(curl -s -H "X-aliyun-ecs-metadata-token: $token" http://100.100.100.200/latest/meta-data/region-id)
+
+PCCS_URL=https://sgx-dcap-server-vpc.${region_id}.aliyuncs.com/sgx/certification/v3/
+cat > /etc/sgx_default_qcnl.conf << EOF
+# PCCS server address
+PCCS_URL=${PCCS_URL}
+# To accept insecure HTTPS cert, set this option to FALSE
+USE_SECURE_CERT=TRUE
+EOF
+```
+
+Run as a container
+```bash
+docker run -v /etc/sgx_default_qcnl.conf:/etc/sgx_default_qcnl.conf -v /var/lib/vc/dragonball:/var/lib/vc/dragonball --device /dev/sgx_enclave --device /dev/sgx_provision --privileged -d al3-tdx-qpl
 ```
