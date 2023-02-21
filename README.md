@@ -1,12 +1,16 @@
 # QGSD-Multiplexer
 
-This tool is used to multiplex QGS to serve many TD-Guests created by dragonball.
+This tool is used to multiplex QGS to serve many TD-Guests created by the light-weight
+Hypervisor such as Dragonball and Cloud Hypervisor.
+
 The tool will watch `/var/lib/vc/dragonball`. Whenever a new guest is created, a related
 vsock file `/var/lib/vc/dragonball/<guest-id>/root/kata.hvsock_40` will be created. The
 vsock file will be connect to qgs socket on the other side.
-If a new one is created, there will be a new connection between the socket file and the QGS' socketfile `/var/run/tdx-qgs/qgs.socket` by default.
 
-build this binary
+If a new one is created, there will be a new connection between the socket file and the
+QGS' socketfile `/var/run/tdx-qgs/qgs.socket` by default.
+
+Run the following command to build the binary:
 
 ```bash
 cargo build --bin qgsd-multiplexer --features="tokio/rt-multi-thread main tokio/macros" --release
