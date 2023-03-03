@@ -1,7 +1,7 @@
 use anyhow::*;
 use clap::{App, Arg};
-use qgsd_multiplexer::Multiplexer;
 use log::info;
+use qgsd_multiplexer::Multiplexer;
 
 const QGS_PATH: &str = "/var/run/tdx-qgs/qgs.socket";
 

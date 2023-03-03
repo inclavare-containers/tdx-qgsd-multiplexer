@@ -2,5 +2,5 @@ target
 
 Cargo.lock
 
-tool/sgx_rpm_local_repo
-tool/sgx_rpm_local_repo.tgz
+sgx_rpm_local_repo
+sgx_rpm_local_repo.tgz
