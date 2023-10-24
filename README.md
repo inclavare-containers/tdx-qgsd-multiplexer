@@ -37,6 +37,8 @@ Now it will automatically multiplex the qgsd to different tdx guests.
 
 ### Build image containing tdx QPL stack and launch
 
+*warning*: The version of sgx-qpl lib is 1.15
+
 Build the docker image with tdx qpl and qgsd on Anolis8.6. (DCAP 1.15)
 ```bash
 bash build.sh
@@ -58,5 +60,5 @@ docker run \
     --device /dev/sgx_provision \
     --privileged \
     -d \
-    al3-tdx-qpl:dcap-1.15
+    xynnn007/al3-tdx-qpl:yunqi-4
 ```
