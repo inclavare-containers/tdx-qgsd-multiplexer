@@ -124,11 +124,17 @@ async fn listen_guest(
 
         tx_map.lock().await.insert(id.clone(), tx);
         tokio::spawn(async move {
-            tokio::select! {
-                Err(e) = io::copy(&mut gr, &mut qw) => error!("{id} connection failed: {e}"),
-                Err(e) = io::copy(&mut qr, &mut gw) => error!("{id} connection failed: {e}"),
-                Some(_) = rx.recv() => info!("{id} exits."),
-            };
+            loop {
+                tokio::select! {
+                    Err(e) = io::copy(&mut gr, &mut qw) => error!("{id} connection failed: {e}"),
+                    Err(e) = io::copy(&mut qr, &mut gw) => error!("{id} connection failed: {e}"),
+                    Some(_) = rx.recv() => {
+                        info!("{id} exits.");
+                        return
+                    }
+                    else => warn!("{id} nothing happened."),
+                };
+            }
         });
     }
 
