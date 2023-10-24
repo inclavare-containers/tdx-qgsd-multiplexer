@@ -13,10 +13,6 @@ use tokio::{
 };
 use tokio_stream::wrappers::UnixListenerStream;
 
-const DRAGONBALL_WORKDIR: &str = "/var/lib/vc/dragonball";
-
-const VSOCK_NAME: &str = "kata.hvsock_40";
-
 pub struct Multiplexer {
     inotify: Inotify,
     qgs_map: Arc<Mutex<BTreeMap<String, Sender<usize>>>>,
@@ -31,9 +27,14 @@ impl Multiplexer {
         })
     }
 
-    pub async fn start(&mut self, qgs_socket_path: &str) -> Result<()> {
+    pub async fn start(
+        &mut self,
+        qgs_socket_path: &str,
+        vsock_name: &str,
+        vsock_path: &str,
+    ) -> Result<()> {
         self.inotify
-            .add_watch(DRAGONBALL_WORKDIR, WatchMask::CREATE | WatchMask::DELETE)
+            .add_watch(vsock_path, WatchMask::CREATE | WatchMask::DELETE)
             .context("watch failed")?;
 
         let mut buffer = [0; 4096];
@@ -53,10 +54,11 @@ impl Multiplexer {
 
             if event.mask.contains(EventMask::CREATE) {
                 let id = get_guest_id(event)?;
-                fs::create_dir_all(format!("{DRAGONBALL_WORKDIR}/{id}/root")).await?;
+                fs::create_dir_all(format!("{vsock_path}/{id}/root")).await?;
                 info!("Create new guest id {id}");
 
-                let guest_socket = format!("{DRAGONBALL_WORKDIR}/{id}/root/{VSOCK_NAME}");
+                let guest_socket = format!("{vsock_path}/{id}/root/{vsock_name}");
+                info!("");
                 let guest_socket =
                     UnixListener::bind(guest_socket).context("connect guest unix socket")?;
                 let listener = UnixListenerStream::new(guest_socket);
