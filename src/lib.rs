@@ -134,7 +134,7 @@ async fn listen_guest(
                         info!("{id} exits.");
                         return
                     }
-                    else => warn!("{id} nothing happened."),
+                    else => {},
                 };
             }
         });
