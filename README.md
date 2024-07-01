@@ -20,6 +20,15 @@ And you can find in `target/release/qgsd-multiplexer`.
 
 By default, it will use `"/var/run/tdx-qgs/qgs.socket"` as the qgs socket.
 
+Parameters:
+- `--qgs <path to qgs socket file>`: default value is `/var/run/tdx-qgs/qgs.socket`.
+- `--vsock_name <vsock file name>`: default is `kata.hvsock_40`.
+- `--vsock_path <vsock path>`: default is `/var/lib/vc/dragonball`.
+
+The logic is the notifier will watch directories creations under `vsock_path`. Any new directory creation
+would cause a creation of `root/<vsock_name>` under that dir. This file is a unix socket file,
+its written end will be bound to `<qgs>`.
+
 ## Usage
 
 ### Build the binary (Not Recommended)
@@ -37,19 +46,14 @@ Now it will automatically multiplex the qgsd to different tdx guests.
 
 ### Build image containing tdx QPL stack and launch
 
-*warning*: The version of sgx-qpl lib is 1.15
+*warning*: The version of sgx-qpl lib is 1.21
 
-Build the docker image with tdx qpl and qgsd on Anolis8.6. (DCAP 1.15)
+Build the docker image with tdx qpl and qgsd on Anolis8.6. (DCAP 1.21)
 ```bash
-bash build.sh
+make image
 ```
 
-Edit a correctly `sgx_default_qcnl.conf` for the container
-
-```toml
-PCCS_URL=<end-point-to-the-pccs>
-USE_SECURE_CERT=TRUE
-```
+Ensure the region id where PCCS of aliyun lies in, e.g. `cn-beijing`.
 
 Run as a container
 ```bash
@@ -59,6 +63,7 @@ docker run \
     --device /dev/sgx_enclave \
     --device /dev/sgx_provision \
     --privileged \
+    --env REGION_ID=cn-beijing \
     -d \
     xynnn007/al3-tdx-qpl:yunqi-4
 ```

@@ -19,7 +19,7 @@ COPY --from=qgsd-multiplexer-builder /home/tdx-qgsd-multiplexer/target/release/q
 
 WORKDIR /tmp
 
-RUN curl https://download.01.org/intel-sgx/sgx-dcap/1.15/linux/distro/Anolis86/sgx_rpm_local_repo.tgz --output sgx_rpm_local_repo.tgz && \
+RUN curl https://download.01.org/intel-sgx/sgx-dcap/1.21/linux/distro/Anolis86/sgx_rpm_local_repo.tgz --output sgx_rpm_local_repo.tgz && \
     tar zxvf sgx_rpm_local_repo.tgz && \
     yum -y install yum-utils && yum-config-manager --add-repo file:///tmp/sgx_rpm_local_repo && \
     yum -y install epel-release && \
@@ -30,7 +30,7 @@ RUN curl https://download.01.org/intel-sgx/sgx-dcap/1.15/linux/distro/Anolis86/s
 RUN mkdir -p /var/run/tdx-qgs
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
+COPY start.sh /usr/bin/start.sh
 COPY qgs.conf /etc/qgs.conf
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+CMD ["bash", "-c", "/usr/bin/start.sh"]
