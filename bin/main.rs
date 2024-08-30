@@ -4,7 +4,7 @@ use log::info;
 use qgsd_multiplexer::Multiplexer;
 
 const QGS_PATH: &str = "/var/run/tdx-qgs/qgs.socket";
-const VSOCK_NAME: &str = "kata.hvsock_40";
+const VSOCK_NAME: &str = "kata.hvsock_4050";
 const VSOCK_PATH: &str = "/var/lib/vc/dragonball";
 
 #[tokio::main]
