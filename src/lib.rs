@@ -7,7 +7,7 @@ use futures::TryStreamExt;
 use inotify::{Event, EventMask, Inotify, WatchMask};
 use log::{error, info, warn};
 use tokio::{
-    fs, io,
+    io,
     net::{UnixListener, UnixStream},
     sync::{mpsc::Sender, Mutex},
 };
@@ -54,10 +54,9 @@ impl Multiplexer {
 
             if event.mask.contains(EventMask::CREATE) {
                 let id = get_guest_id(event)?;
-                fs::create_dir_all(format!("{vsock_path}/{id}/root")).await?;
                 info!("Create new guest id {id}");
 
-                let guest_socket = format!("{vsock_path}/{id}/root/{vsock_name}");
+                let guest_socket = format!("{vsock_path}/{id}/{vsock_name}");
                 info!("");
                 let guest_socket =
                     UnixListener::bind(guest_socket).context("connect guest unix socket")?;
