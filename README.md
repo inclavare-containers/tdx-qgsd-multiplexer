@@ -4,7 +4,7 @@ This tool is used to multiplex QGS to serve many TD-Guests created by the light-
 Hypervisor such as Dragonball and Cloud Hypervisor.
 
 The tool will watch `/var/lib/vc/dragonball`. Whenever a new guest is created, a related
-vsock file `/var/lib/vc/dragonball/<guest-id>/root/kata.hvsock_40` will be created. This
+vsock file `/var/lib/vc/dragonball/<guest-id>/kata.hvsock_40` will be created. This
 vsock file serves for the `vsock://40` in guest. Then QGSD-Multiplexer will connect the
 vsock file to the QGS' socketfile `/var/run/tdx-qgs/qgs.socket` by default.
 
@@ -26,7 +26,7 @@ Parameters:
 - `--vsock_path <vsock path>`: default is `/var/lib/vc/dragonball`.
 
 The logic is the notifier will watch directories creations under `vsock_path`. Any new directory creation
-would cause a creation of `root/<vsock_name>` under that dir. This file is a unix socket file,
+would cause a creation of `<vsock_name>` under that dir. This file is a unix socket file,
 its written end will be bound to `<qgs>`.
 
 ## Usage
@@ -65,5 +65,5 @@ docker run \
     --privileged \
     --env REGION_ID=cn-beijing \
     -d \
-    xynnn007/al3-tdx-qpl:yunqi-4
+    xynnn007/al3-tdx-qpl:64179a7a
 ```
