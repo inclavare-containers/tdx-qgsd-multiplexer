@@ -65,5 +65,5 @@ docker run \
     --privileged \
     --env REGION_ID=cn-beijing \
     -d \
-    xynnn007/al3-tdx-qpl:64179a7a
+    xynnn007/al3-tdx-qpl:63afe8b
 ```
